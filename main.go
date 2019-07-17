@@ -1,9 +1,23 @@
 package main
 
-import "fmt"
+import (
+	"database/sql"
+	"fmt"
+	_ "github.com/lib/pq"
+)
 func main() {
-	a:=1
-for i:=1; i<=10;i++{
-	a*=i}
-fmt.Println(a)
+	connStr:="user=postgres password=people1234 dbname=people sslmode=disable"
+	db, err := sql.Open("postgres",connStr)
+
+	if err!= nil{
+		panic(err)
+	}
+	defer db.Close()
+	result, err := db.Exec("insert into people (uname,sex,age)" +
+		" values ('Emilia','female',21)")
+	if err !=nil{
+		panic(err)
+	}
+	fmt.Println(result.LastInsertId())
+	fmt.Println(result.RowsAffected())
 }

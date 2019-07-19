@@ -1,23 +1,20 @@
 package main
-
 import (
-	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
+	"net/http"
 )
-func main() {
-	connStr:="user=postgres password=people1234 dbname=people sslmode=disable"
-	db, err := sql.Open("postgres",connStr)
 
-	if err!= nil{
-		panic(err)
-	}
-	defer db.Close()
-	result, err := db.Exec("insert into people (uname,sex,age)" +
-		" values ('Emilia','female',21)")
-	if err !=nil{
-		panic(err)
-	}
-	fmt.Println(result.LastInsertId())
-	fmt.Println(result.RowsAffected())
+func main() {
+
+	http.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request){
+		http.ServeFile(w, r, "hello")
+	})
+	http.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request){
+		fmt.Fprint(w, "About Page")
+	})
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
+		fmt.Fprint(w, "Index Page")
+	})
+	fmt.Println("Server is listening...")
+	http.ListenAndServe(":8181", nil)
 }

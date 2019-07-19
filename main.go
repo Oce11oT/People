@@ -7,7 +7,7 @@ import (
 func main() {
 
 	http.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request){
-		http.ServeFile(w, r, "hello")
+		http.ServeFile(w, r, "hello.html" )
 	})
 	http.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request){
 		fmt.Fprint(w, "About Page")

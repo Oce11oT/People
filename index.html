@@ -1,23 +1,20 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-
-<head>
-    <title> People</title>
-    <meta charset ="utf-8">
-    <link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-    <h1>People database</h1>
-    <form action="createPage.html">
-    <p><button>Create</button></p>
-    </form>
-    <form action="updatePage.html">
-    <p><button>Update</button></p>
-    </form>
-    <form action="showPage.html">
-    <p><button>Show</button></p>
-    </form>
-</body>
-    
+    <head>
+        <meta charset="UTF-8">
+        <title>People</title>
+    </head>
+    <body>
+        <table>
+            <thead><th>Id</th><th>Name</th><th>Sex</th><th>Age</th></thead>
+            {{range . }}
+            <tr>
+                <td>{{.Id}}</td>
+                <td>{{.Name}}</td>
+                <td>{{.Sex}}</td>
+                <td>{{.Age}}</td>
+            </tr>
+            {{end}}
+        </table>
+    </body>
 </html>

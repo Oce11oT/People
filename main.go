@@ -38,7 +38,7 @@ defer rows.Close()
 }
 
 func main() {
-	connStr := "user=postgres password=people1234 dbname=people sslmode=disable" //error is here!
+	connStr := "user=postgres password=people1234 dbname=postgres sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 
 	if err != nil {

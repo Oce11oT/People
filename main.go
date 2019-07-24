@@ -15,6 +15,7 @@ type People struct {
 }
 var database *sql.DB
 
+//show table
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := database.Query("select * from people")

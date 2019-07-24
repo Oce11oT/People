@@ -20,7 +20,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	defer rows.Close()
+defer rows.Close()
 	people := []People{}
 
 	for rows.Next(){
@@ -33,7 +33,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		people = append(people, p)
 	}
 
-	tmpl, _ := template.ParseFiles("templates/index.html")
+	tmpl, _ := template.ParseFiles("index.html")
 	tmpl.Execute(w, people)
 }
 

@@ -14,6 +14,7 @@ type People struct {
 	Age int
 }
 var database *sql.DB
+
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := database.Query("select * from people")
@@ -36,6 +37,29 @@ defer rows.Close()
 	tmpl, _ := template.ParseFiles("index.html")
 	tmpl.Execute(w, people)
 }
+//add data
+func CreateHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+
+		err := r.ParseForm()
+		if err != nil {
+			log.Println(err)
+		}
+		name := r.FormValue("name")
+		sex := r.FormValue("sex")
+		age := r.FormValue("age")
+
+		_, err = database.Exec("insert into people (uname, sex, age) values (?, ?, ?)",
+			name, sex, age)
+
+		if err != nil {
+			log.Println(err)
+		}
+		http.Redirect(w, r, "/", 301)
+	}else{
+		http.ServeFile(w,r, "create.html")
+	}
+}
 
 func main() {
 	connStr := "user=postgres password=people1234 dbname=postgres sslmode=disable"
@@ -47,6 +71,7 @@ func main() {
 	database = db
 	defer db.Close()
 	http.HandleFunc("/", IndexHandler)
+	http.HandleFunc("/create", CreateHandler)
 
 	fmt.Println("Server is listening...")
 	http.ListenAndServe(":8181", nil)

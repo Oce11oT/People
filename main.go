@@ -91,7 +91,7 @@ func EditHandler(w http.ResponseWriter, r *http.Request) {
 	sex := r.FormValue("sex")
 	age := r.FormValue("age")
 
-	_, err = database.Exec("update people set uname = $1, sex = $2, age = $3 where id = $4",
+	_, err = database.Exec("update people set uname = $1, sex = $2, age = $3 where uid = $4",
 		name, sex, age, id)
 
 	if err != nil {

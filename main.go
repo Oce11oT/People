@@ -109,6 +109,8 @@ func main() {
 	}
 	database = db
 	defer db.Close()
+
+	router :=mux.NewRouter()
 	http.HandleFunc("/", IndexHandler)
 	http.HandleFunc("/create", CreateHandler)
 

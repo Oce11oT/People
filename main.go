@@ -99,6 +99,18 @@ func EditHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	http.Redirect(w, r, "/", 301)
 }
+//delete data
+func DeleteHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	_, err := database.Exec("delete from people where uid = $1", id)
+	if err != nil{
+		log.Println(err)
+	}
+
+	http.Redirect(w, r, "/", 301)
+}
 
 func main() {
 	connStr := "user=postgres password=people1234 dbname=postgres sslmode=disable"
@@ -115,8 +127,10 @@ func main() {
 	router.HandleFunc("/create", CreateHandler)
 	router.HandleFunc("/edit/{id:[0-9]+}", EditPage).Methods("GET")
 	router.HandleFunc("/edit/{id:[0-9]+}", EditHandler).Methods("POST")
+	router.HandleFunc("/delete/{id:[0-9]+}",DeleteHandler)
 
 	http.Handle("/",router)
+
 	fmt.Println("Server is listening...")
 	http.ListenAndServe(":8181", nil)
 }

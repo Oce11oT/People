@@ -2,6 +2,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"html/template"
 	"log"
@@ -50,7 +51,7 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 		sex := r.FormValue("sex")
 		age := r.FormValue("age")
 
-		_, err = database.Exec("insert into people (uname, sex, age) values (?, ?, ?)",
+		_, err = database.Exec("insert into people (uname, sex, age) values ($1, $2, $3)",
 			name, sex, age)
 
 		if err != nil {
@@ -60,6 +61,43 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 	}else{
 		http.ServeFile(w,r, "create.html")
 	}
+}
+
+//edit.html
+func EditPage(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	row := database.QueryRow("select * from people where uid = $1", id)
+	pers := People{}
+	err := row.Scan(&pers.Id, &pers.Name, &pers.Sex, &pers.Age)
+	if err != nil{
+		log.Println(err)
+		http.Error(w, http.StatusText(404), http.StatusNotFound)
+	}else{
+		tmpl, _ := template.ParseFiles("edit.html")
+		tmpl.Execute(w, pers)
+	}
+}
+
+//get data and update
+func EditHandler(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+	}
+	id := r.FormValue("id")
+	name := r.FormValue("name")
+	sex := r.FormValue("sex")
+	age := r.FormValue("age")
+
+	_, err = database.Exec("update people set uname = $1, sex = $2, age = $3 where id = $4",
+		name, sex, age, id)
+
+	if err != nil {
+		log.Println(err)
+	}
+	http.Redirect(w, r, "/", 301)
 }
 
 func main() {
@@ -74,6 +112,10 @@ func main() {
 	http.HandleFunc("/", IndexHandler)
 	http.HandleFunc("/create", CreateHandler)
 
+	router.HandleFunc("/edit/{id:[0-9]+}", EditPage).Methods("GET")
+	router.HandleFunc("/edit/{id:[0-9]+}", EditHandler).Methods("POST")
+
+	http.Handle("/",router)
 	fmt.Println("Server is listening...")
 	http.ListenAndServe(":8181", nil)
 }

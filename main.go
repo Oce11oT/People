@@ -111,8 +111,8 @@ func main() {
 	defer db.Close()
 
 	router :=mux.NewRouter()
-	http.HandleFunc("/", IndexHandler)
-	http.HandleFunc("/create", CreateHandler)
+	router.HandleFunc("/", IndexHandler)
+	router.HandleFunc("/create", CreateHandler)
 	router.HandleFunc("/edit/{id:[0-9]+}", EditPage).Methods("GET")
 	router.HandleFunc("/edit/{id:[0-9]+}", EditHandler).Methods("POST")
 
